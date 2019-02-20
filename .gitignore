@@ -1,0 +1,7 @@
+build
+cert
+.env
+.DS_Storepack
+package-lock.json
+*.pem
+*.log
