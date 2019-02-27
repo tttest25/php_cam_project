@@ -24,4 +24,3 @@ require 'includes/functions.php';
 init();
 
 #404
-

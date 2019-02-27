@@ -1,5 +1,20 @@
 <?php
 
+define("PATH_CAM",     '/var/www/dokuwiki/www/cam304/camera/');
+
+
+function HumanSize($Bytes)
+{
+  $Type=array("", "kilo", "mega", "giga", "tera", "peta", "exa", "zetta", "yotta");
+  $Index=0;
+  while($Bytes>=1024)
+  {
+    $Bytes/=1024;
+    $Index++;
+  }
+  return("".$Bytes." ".$Type[$Index]."bytes");
+}
+
 function dirToArray($dir) {
    $result = array();
    $cdir = scandir($dir); 
@@ -20,6 +35,62 @@ function dirToArray($dir) {
    return $result; 
 } 
 
+// funct directory to aray 
+function camDirToArray($dir)
+{
+   $dirArr=array_diff(scandir($dir.'/images',1), array('.', '..','crontab.log'));
+   array_walk($dirArr, function (&$value, $key) use (&$dir) {
+      // $value=str_replace($dir,"/var/www/dokuwiki",".")."/images/$value";
+      $value=str_replace("/var/www/dokuwiki","",$dir)."/images/$value";
+   });
+   return $dirArr;
+}
+
+// parse filename to hour 
+function parseFilenameToHour($filename)
+{
+   preg_match('/A(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d)(\d\d).jpg/', $filename, $matches);
+   return $matches;
+}
+
+// file name pic to show
+function fileThumbHtml($file_pic = null)
+{
+   $fDt=parseFilenameToHour($file_pic);
+   $val= "<a href='$file_pic' target='_blank'><img src='/www/cam/imgresize.php?src=$file_pic' width='128px' height='72px'/>"
+   // . "Year $fDt[1] Month $fDt[2] Day $fDt[3] Hour $fDt[4] Min $fDt[5] Sec $fDt[6]"
+   ."</a>";
+   return $val;
+}
+
+// func to show html directory
+function camShowDir($dir)
+{
+   $val="";
+   $arr=camDirToArray($dir);
+   $curHour="";
+   foreach ($arr as &$value) {
+      // . "Year $fDt[1] Month $fDt[2] Day $fDt[3] Hour $fDt[4] Min $fDt[5] Sec $fDt[6]"
+      $fDt=parseFilenameToHour($value);
+      if ($curHour!==$fDt[3].$fDt[4]) {
+         $curHour=$fDt[3].$fDt[4];
+         $val.="<br> Hour $fDt[4] <br>";
+      }
+      
+      $val.= fileThumbHtml($value);
+      //$val.= "$value<br> ";
+   }
+   unset($value); // разорвать ссылку на последний элемент
+   return $val;
+}
+
+
+function dirListToArray($path = '.')
+{
+   # code...
+   return  array_diff(scandir($path,1), array('.', '..','crontab.log'));
+}
+
 function printImg($v,$pfx = ''){
   $result='';
   if (is_array($v)) {
@@ -39,17 +110,35 @@ function printImg($v,$pfx = ''){
 }
 
 
-echo "<h3> List of all images </h3>\n";
+// echo "<h3> List of all images </h3>\n";
 
 //Get a list of file paths using the glob function.
 //$fileList = glob('/var/www/dokuwiki/www/cam304/camera/*');
-$fileList = dirToArray('/var/www/dokuwiki/www/cam304/camera/');
+$fileList = dirToArray(PATH_CAM);
 //Loop through the array that glob returned.
 /*foreach($fileList as $filename){
    //Simply print them out onto the screen.
    echo $filename, '<br>';
 }*/
-echo printImg($fileList,'/www/cam304/camera/');
+
+// echo printImg($fileList,'/www/cam304/camera/');
+
+
+
+// ------------- Code ------------------------------------
+
+echo "<h2> Free ".HumanSize(disk_free_space(PATH_CAM))."</h2>";
+
+foreach (dirListToArray(PATH_CAM) as &$value) {
+   echo "<br> Date:".$value;
+   
+   if ($value===date("Ymd") or $value===date("Ymd", time() - 60 * 60 * 24)) {
+      //implode(" ", camShowDir(PATH_CAM.$value));
+      echo camShowDir(PATH_CAM.$value);
+   }
+}
+unset($value); // разорвать ссылку на последний элемент
+
 
 /*
 echo '<pre>';

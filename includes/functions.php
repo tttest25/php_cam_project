@@ -69,7 +69,8 @@ function page_content()
     } elseif (file_exists($path.'.php')) {
         include($path.'.php');
     } else {
-        $path = getcwd() . '/' . config('content_path') . '/404.phtml';
+        $path = getcwd() . '/' . config('content_path') . '/404';
+        echo file_get_contents($path.'.phtml');
     }
 
     

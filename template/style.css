@@ -1,6 +1,6 @@
 
 .wrap { 
-    max-width: 720px; 
+    max-width: 90%; 
     margin: 50px auto; 
     padding: 30px 40px; 
     text-align: center; 
@@ -17,4 +17,9 @@ nav .item {
 }
 nav .active {
     border-bottom: 1px solid;
+}
+
+.error {
+    color: red;
+    padding: 20px;
 }

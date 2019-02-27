@@ -9,7 +9,7 @@ function config($key = '')
 {
     $config = [
         'name' => 'Camera',
-        'site_url' => 'https://wiki.gorodperm.ru/www/cam/index.php',
+        'site_url' => 'https://wiki.gorodperm.ru/www/cam',
         'pretty_uri' => false,
         'nav_menu' => [
             '' => 'Home',
