@@ -1,11 +1,9 @@
 #!/bin/bash
 
-LOGFILE="/var/www/dokuwiki/www/cam304/camera/crontab.log"
+LOGFILE="/var/www/dokuwiki/www/cam304/camera/crontab$(date '+%Y%m%d').log"
 cur="/var/www/dokuwiki/www/cam/scripts"
 PATHCAM="/var/www/dokuwiki/www/cam304/camera"
 PATHCAMDT="$PATHCAM/$(date '+%Y%m%d')/record"
-
-
 
 
 if [ ! -d "$PATHCAMDT/web" ]; then
@@ -14,7 +12,7 @@ if [ ! -d "$PATHCAMDT/web" ]; then
   mkdir "$PATHCAMDT/web"
 fi
 
-echo "Started at $(date) dir $PATHCAMDT." > "$LOGFILE"
+echo "--> Started at $(date) dir $PATHCAMDT." >> "$LOGFILE"
 # echo "$PATHCAM/$(date '+%Y%m%d')/record" > "$LOGFILE" 2>&1
 
 cd $PATHCAMDT
@@ -22,6 +20,8 @@ cd $PATHCAMDT
  for i in *.avi; do 
   ffmpeg -loglevel error -i  "$i" -c:v libx264 -profile:v main -level 4.0 -preset fast  -movflags +faststart  -c:a aac -b:a 128k -strict -2 "./web/${i%.*}.mp4" && rm $i && echo "$(date +%x_%H:%M:%S:%N) decode $i" >> "$LOGFILE"; 
  done
+
+ echo "==> Stoped at $(date)." >> "$LOGFILE"
 
 # logfile=encodemp4ize.log
 # echo "Started at $(date)." > "$logfile"

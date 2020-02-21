@@ -13,9 +13,10 @@ function config($key = '')
         'pretty_uri' => false,
         'nav_menu' => [
             '' => 'Home',
-            'period' => 'Period',
-            'images' => 'Images',
             'list' => 'List',
+            'video' => 'Video',
+            /*'period' => 'Period',*/
+            
         ],
         'template_path' => 'template',
         'content_path' => 'content',

@@ -1,13 +1,13 @@
 
 .wrap { 
-    max-width: 90%; 
-    margin: 50px auto; 
-    padding: 30px 40px; 
+    max-width: 95%; 
+    margin: 10px auto; 
+    padding: 10px 10px; 
     text-align: center; 
     box-shadow: 0 4px 25px -4px #9da5ab; 
 }
 article { 
-    padding: 40px; 
+    padding: 10px; 
     line-height: 150%; 
     text-align: left; 
 }
@@ -22,4 +22,8 @@ nav .active {
 .error {
     color: red;
     padding: 20px;
+}
+
+.weekend {
+    color: maroon;
 }

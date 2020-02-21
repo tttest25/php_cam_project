@@ -39,6 +39,10 @@ function dirToArray($dir) {
 function camDirToArray($dir)
 {
    $dirArr=array_diff(scandir($dir.'/images',1), array('.', '..','crontab.log'));
+   
+   /*$dirArr=array_filter($dirArr, function($v) {
+      return is_dir($v);
+   });*/
    array_walk($dirArr, function (&$value, $key) use (&$dir) {
       // $value=str_replace($dir,"/var/www/dokuwiki",".")."/images/$value";
       $value=str_replace("/var/www/dokuwiki","",$dir)."/images/$value";
@@ -71,7 +75,7 @@ function camShowDir($dir)
    $curHour="";
    foreach ($arr as &$value) {
       // . "Year $fDt[1] Month $fDt[2] Day $fDt[3] Hour $fDt[4] Min $fDt[5] Sec $fDt[6]"
-      $fDt=parseFilenameToHour($value);
+      $fDt=parseFilenameToHour($value); //  (!isset($_GET["dt"]))  ? $value : $_GET["dt"] || is_null(parseFilenameToHour($_GET["dt"]))
       if ($curHour!==$fDt[3].$fDt[4]) {
          $curHour=$fDt[3].$fDt[4];
          $val.="<br> Hour $fDt[4] <br>";
@@ -91,6 +95,16 @@ function dirListToArray($path = '.')
    return  array_diff(scandir($path,1), array('.', '..','crontab.log'));
 }
 
+function isweekend($dt)
+{
+   $result=0;
+   # isweekend or not
+   $dateObj = \DateTime::createFromFormat("Ymd", $dt);
+   if ($dateObj) {
+      $result=$dateObj->format("N");
+   }
+   return $result>5 ? true : false;
+}
 function printImg($v,$pfx = ''){
   $result='';
   if (is_array($v)) {
@@ -129,10 +143,19 @@ $fileList = dirToArray(PATH_CAM);
 
 echo "<h2> Free ".HumanSize(disk_free_space(PATH_CAM))."</h2>";
 
+// dirListToArray -> camshowdir -> (camdir2array) filethumb
+
 foreach (dirListToArray(PATH_CAM) as &$value) {
-   echo "<br> Date:".$value;
-   
-   if ($value===date("Ymd") or $value===date("Ymd", time() - 60 * 60 * 24)) {
+   // Show only directories
+     if ((strpos($value, 'log'))) { continue; }
+   echo "<br> <span class='".(isweekend($value)?"weekend":"")."'> Date:<a  href='/www/cam/?page=list&dt=${value}'>${value}".(isweekend($value)?"*":"")."</a></span>";
+   // Show pictures on today +yestoday or params dt
+   if (
+         ( 
+           (isset($_GET["dt"]) ? $_GET["dt"] : "") === $value)
+             OR
+           (!isset($_GET["dt"]) AND ($value===date("Ymd") or $value===date("Ymd", time() - 60 * 60 * 24)))
+   ) {
       //implode(" ", camShowDir(PATH_CAM.$value));
       echo camShowDir(PATH_CAM.$value);
    }
