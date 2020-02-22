@@ -1,0 +1,4 @@
+SHELL=/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+*/5 * * * *   cam304   /var/www/dokuwiki/www/cam/scripts/cron_5m.sh
+10  1 * * *   cam304   /var/www/dokuwiki/www/cam/scripts/cron_1d.sh

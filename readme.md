@@ -5,6 +5,7 @@ service for showing cam snapshots
 *   20190507 - add  day of the week to caption 
 *   20190220 - 
 *   20190221 - to recreate videos create h264:acc  - mp4  with ffmpeg :
+*   20200221 - add filter by HH24 not for dd in video , too many videos
 
 for decode 
 ```bash
